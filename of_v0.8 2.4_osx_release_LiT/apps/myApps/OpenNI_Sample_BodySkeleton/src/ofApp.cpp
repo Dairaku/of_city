@@ -29,7 +29,7 @@ void ofApp::update(){
 void ofApp::draw(){
     ofSetColor(255);
     kinect.drawDepth(0,0,640,480);
-    kinect.drawSkeletons(0,0,640,480);
+    // kinect.drawSkeletons(0,0,640,480);
     
     if (kinect.getNumTrackedUsers() > 0) {
         ofxOpenNIUser user = kinect.getTrackedUser(0);
@@ -41,7 +41,35 @@ void ofApp::draw(){
             if (joint.isFound()) {
                 float x = joint.getProjectivePosition().x;
                 float y = joint.getProjectivePosition().y;
-                ofCircle(x, y, 10);
+                // ofCircle(x, y, 10);
+                switch ((enum Joint) i) {
+                    case JOINT_HEAD:
+                    case JOINT_LEFT_HAND:
+                    case JOINT_RIGHT_HAND:
+                    case JOINT_LEFT_FOOT:
+                    case JOINT_RIGHT_FOOT:
+                        ofSetColor(255, 0, 0);
+                        ofCircle(x, y, 20);
+                        break;
+                        
+                    default:
+                        ofSetColor(255);
+                        ofCircle(x, y, 10);
+                        break;
+                }
+            }
+        }
+        
+        ofSetLineWidth(2);
+        ofSetColor(100, 200, 255);
+        for (int i = 0; i < user.getNumLimbs(); i++) {
+            ofxOpenNILimb limb = user.getLimb((enum Limb) i);
+            if (limb.isFound()) {
+                float sX = limb.getStartJoint().getProjectivePosition().x;
+                float sY = limb.getStartJoint().getProjectivePosition().y;
+                float eX = limb.getEndJoint().getProjectivePosition().x;
+                float eY = limb.getEndJoint().getProjectivePosition().y;
+                ofLine(sX, sY, eX, eY);
             }
         }
     }
@@ -52,8 +80,7 @@ void ofApp::exit(){
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-
+void ofApp::keyPressed (int key) {
 }
 
 //--------------------------------------------------------------
