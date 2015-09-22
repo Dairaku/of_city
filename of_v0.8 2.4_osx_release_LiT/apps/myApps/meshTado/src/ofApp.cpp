@@ -17,6 +17,8 @@ void testApp::setup() {
     angle = 0;
     kinect.setCameraTiltAngle(angle);
     
+    ofToggleFullscreen();//画面をフルスクリーンモードにする。
+    
 }
 
 void testApp::update() {
@@ -94,9 +96,9 @@ void testApp::keyPressed (int key) {
             break;
     }
     
-    if(key=='f'){//もしキーボードで'f'を入力したとき
-        ofToggleFullscreen();//画面をフルスクリーンモードにする。
-    }
+    // if(key=='f'){//もしキーボードで'f'を入力したとき
+    //    ofToggleFullscreen();//画面をフルスクリーンモードにする。
+    // }
 }
 
 //--------------------------------------------------------------
