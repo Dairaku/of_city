@@ -27,10 +27,24 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    ofSetColor(255);
     kinect.drawDepth(0,0,640,480);
-    
     kinect.drawSkeletons(0,0,640,480);
     
+    if (kinect.getNumTrackedUsers() > 0) {
+        ofxOpenNIUser user = kinect.getTrackedUser(0);
+        
+        //draw joint-circle
+        ofSetColor(255, 255, 255,ofRandom(255));
+        for (int i = 0; i < user.getNumJoints(); i++) {
+            ofxOpenNIJoint joint = user.getJoint((enum Joint) i);
+            if (joint.isFound()) {
+                float x = joint.getProjectivePosition().x;
+                float y = joint.getProjectivePosition().y;
+                ofCircle(x, y, 10);
+            }
+        }
+    }
 }
 //--------------------------------------------------------------
 void ofApp::exit(){
