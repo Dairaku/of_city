@@ -4,8 +4,12 @@
 #include "ofxKinect.h"
 
 class testApp : public ofBaseApp {
-public:
+private:
+    ofSoundStream soundStream;
+    float curVol;
     
+public:
+
     void setup();
     void update();
     void draw();
@@ -22,4 +26,7 @@ public:
     ofxKinect kinect;
     int angle;
     ofEasyCam easyCam;
+    ofColor randomColor;
+    
+    void audioIn(float * input, int bufferSize, int nChannels);
 };

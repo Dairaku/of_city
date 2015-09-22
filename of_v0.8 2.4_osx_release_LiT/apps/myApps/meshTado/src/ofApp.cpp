@@ -2,8 +2,11 @@
 
 void testApp::setup() {
     //画面設定
-    ofBackgroundHex(0x000000);
+    // ofBackgroundHex(0x000000);
+    
     ofSetFrameRate(60);
+    
+    soundStream.setup(this, 0, 1, 44100, 256, 4);
     
     // Kinect初期設定
     // 深度とRGB情報のずれを補整
@@ -13,35 +16,43 @@ void testApp::setup() {
     // 角度を調整(0度に)
     angle = 0;
     kinect.setCameraTiltAngle(angle);
+    
 }
 
 void testApp::update() {
     // Kinect更新
     kinect.update();
+    
+    curVol = curVol * 10000;
 }
 
 void testApp::draw() {
+    ofBackground(255, 255, 255);
     // ドラッグで視線を変更できるように(ofEasyCam)
     easyCam.begin();
     //ポイントクラウドの描画
     drawPointCloud();
     easyCam.end();
+    cout << curVol << endl;
 }
 
 void testApp::drawPointCloud() {
     // 画面の幅と高さ
-    int w = 640;
-    int h = 480;
+    int w = ofGetWidth();
+    int h = ofGetHeight();
     // メッシュを生成
     ofMesh mesh;
     mesh.setMode(OF_PRIMITIVE_POINTS);
     
     // 設定した間隔で、画面の深度情報と色を取得してメッシュの頂点に設定
     int step = 2;
+    
+    randomColor.setHsb(ofRandom(255), ofRandom(255), ofRandom(255));
     for(int y = 0; y < h; y += step) {
         for(int x = 0; x < w; x += step) {
             if(kinect.getDistanceAt(x, y) > 0) {
-                mesh.addColor(kinect.getColorAt(x,y));
+                //mesh.addColor(kinect.getColorAt(x,y));
+                mesh.addColor(randomColor);
                 mesh.addVertex(kinect.getWorldCoordinateAt(x, y));
             }
         }
@@ -82,6 +93,10 @@ void testApp::keyPressed (int key) {
             kinect.setCameraTiltAngle(angle);
             break;
     }
+    
+    if(key=='f'){//もしキーボードで'f'を入力したとき
+        ofToggleFullscreen();//画面をフルスクリーンモードにする。
+    }
 }
 
 //--------------------------------------------------------------
@@ -99,3 +114,12 @@ void testApp::mouseReleased(int x, int y, int button)
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h)
 {}
+
+//--------------------------------------------------------------
+void testApp::audioIn(float * input, int bufferSize, int nChannels){
+    curVol = 0.0;
+    for (int i = 0; i < bufferSize; i++) {
+        curVol += input[i]*input[i];
+    }
+    curVol /= bufferSize;
+}
